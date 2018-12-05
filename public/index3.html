@@ -1,0 +1,103 @@
+<!doctype html>
+
+<!-- ASSIGN OUR ANGULAR MODULE -->
+<html ng-app="scotchTodo">
+<head>
+    <!-- META -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Optimize mobile viewport -->
+
+    <title>AIO System</title>
+
+    <!-- SCROLLS -->
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"><!-- load bootstrap -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+
+    <style>
+        html 					{ overflow-y:scroll; }
+        body 					{ padding-top:50px; }
+        #device-list 			{ margin-bottom:30px; }
+    </style>
+
+    <!-- SPELLS -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script><!-- load jquery -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    <script src="core.js"></script>
+    <script>
+        $(function () {
+           ;
+        });
+    </script>
+</head>
+<!-- SET THE CONTROLLER AND GET ALL TODOS -->
+<body ng-controller="mainController">
+<div class="container">
+
+    <!-- HEADER AND TODO COUNT -->
+    <div class="jumbotron text-center">
+        <h1>장치 리스트 <span class="label label-info">{{ devices.length }}</span></h1>
+    </div>
+
+    <div id="device-list" class="row">
+        <table class="table table-striped">
+            <thread>
+                <tr>
+                    <th>장치ID</th>
+                    <th>위도</th>
+                    <th>경도</th>
+                    <th>업데이트시간</th>
+                    <th>상태</th>
+                </tr>
+            </thread>
+            <tbody>
+                <tr ng-repeat="device in devices">
+                    <td>{{ device.dev_id }}</td>
+                    <td>{{ device.longitude }}</td>
+                    <td>{{ device.latitude }}</td>
+                    <td>{{ device.date }}</td>
+                    <td>{{ device.alive }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="text-center">
+            <ul class="pagination">
+                <li><a href="#">1</a></li>
+                <li><a href="#">2</a></li>
+                <li><a href="#">3</a></li>
+                <li><a href="#">4</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <p class="text-white bg-primary">통계정보</p>
+
+    <div id="myfirstchart" class="row"></div>
+    <script>
+        new Morris.Line({
+            // ID of the element in which to draw the chart.
+            element: 'myfirstchart',
+            // Chart data records -- each entry in this array corresponds to a point on
+            // the chart.
+            data: [
+                { year: '2008', s1: 20, s2: 10, s3: 20, s4: 40, s5: 10, s6: 11, s7: 30, s8: 30},
+                { year: '2009', s1: 10, s2: 30, s3: 10, s4: 70, s5: 10, s6: 81, s7: 40, s8: 30 },
+                { year: '2010', s1: 5, s2: 4, s3: 20, s4: 20, s5: 50, s6: 11, s7: 50, s8: 30  },
+                { year: '2011', s1: 5, s2: 1, s3: 50, s4: 10, s5: 20, s6: 21, s7: 20, s8: 30  },
+                { year: '2012', s1: 20, s2: 8, s3: 60, s4: 5, s5: 10, s6: 31, s7: 10, s8: 30  }
+            ],
+            // The name of the data record attribute that contains x-values.
+            xkey: 'year',
+            // A list of names of data record attributes that contain y-values.
+            ykeys: ['s1', 's2', 's3', 's4', 's5', 's6', 's7', 's8'],
+            // Labels for the ykeys -- will be displayed when you hover over the
+            // chart.
+            labels: ['s1', 's2', 's3', 's4', 's5', 's6', 's7', 's8']
+        });
+    </script>
+</div>
+
+</body>
+</html>
