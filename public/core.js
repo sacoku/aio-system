@@ -1,4 +1,4 @@
-var app = angular.module('app', ['btford.socket-io']);
+var app = angular.module('app', ['btford.socket-io', 'angular.morris']);
 
 app.service('SocketService', ['socketFactory', function(socketFactory) {
     return socketFactory({
@@ -10,7 +10,6 @@ app.controller('mainController', ['$scope', '$http', 'SocketService', function($
     $http.get('/api/devices')
         .success(function(data) {
             $scope.devices = data;
-            console.log(data);
         })
         .error(function(data) {
             console.log('Error: ' + data);
@@ -18,12 +17,33 @@ app.controller('mainController', ['$scope', '$http', 'SocketService', function($
 
     $http.get('/api/sensorData')
         .success(function(data) {
-            $scope.sensorData = data;
-            console.log(data);
+            $scope.sensorData = data.slice(0, 10);
         })
         .error(function(data) {
             console.log('Error: ' + data);
         });
+
+    $scope.click_dev = function(device) {
+        $http.get('/api/daily_data?dev_id=' + device.dev_id)
+            .success(function(data) {
+                $scope.daily_data = data;
+            })
+            .error(function(data) {
+                console.log('Error: ' + data);
+            });
+
+        $http.get('/api/monthly_data?dev_id=' + device.dev_id)
+            .success(function(data) {
+                $scope.monthly_data = data;
+            })
+            .error(function(data) {
+                console.log('Error: ' + data);
+            });
+    }
+
+    $scope.daily_data = [{date:2018, green_detect_cnt:0, red_detect_cnt:0, green_bi_detect_cnt:0, rf_signal_cnt:0}];
+    $scope.monthly_data = [{month:1, green_detect_cnt:0, red_detect_cnt:0, green_bi_detect_cnt:0, rf_signal_cnt:0}];
+    $scope.yearly_data = [{date:2018, green_detect_cnt:0, red_detect_cnt:0, green_bi_detect_cnt:0, rf_signal_cnt:0}];
 
     SocketService.on('status_of_dev', function(msg) {
         console.log('status_of_dev');

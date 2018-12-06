@@ -23,24 +23,19 @@ module.exports = function(args) {
             var date = result['m2m:req']['pc'][0]['cin'][0]['ct'][0];
             var buf = result['m2m:req']['pc'][0]['cin'][0]['con'][0];
 
-            console.log(message);
-
             for (var bytes = [], c = 0; c < buf.length; c += 2)
                 bytes.push(parseInt(buf.substr(c, 2), 16));
 
             switch(bytes[1]) {
                 case 0x10:
-                    util.getDate(bytes);
-                    util.getLatitude(bytes);
-                    util.getLongitude(bytes);
                     tp_mongo.addDevice({
                         dev_id: dev_id,
-                        longitude: '',
-                        latitude: '',
+                        longitude: util.getLongitude(bytes),
+                        latitude: util.getLatitude(bytes),
                         date: date,
                         alive: true
                     });
-                    console.log(bytes);
+
                     socket.send('status_of_dev', '');
                     break;
                 case 0x20:
@@ -52,7 +47,7 @@ module.exports = function(args) {
                         rf_signal_cnt: util.getRFSignalCount(bytes),
                         date: date
                     });
-                    console.log(bytes);
+
                     socket.send('add_sensor_info', '');
                     break;
             }

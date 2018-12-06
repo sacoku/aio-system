@@ -35,11 +35,12 @@
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script><!-- load angular -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/angular-morris/1.3.0/angular-morris.min.js"></script>
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-    <script src="https://unpkg.com/ng-table@2.0.2/bundles/ng-table.min.js"></script>
-    <script src="core.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-socket-io/0.7.0/socket.min.js"></script>
+
+    <script src="core.js"></script>
 
 </head>
 
@@ -77,28 +78,27 @@
     <div class="container">
         <h1>AIO Monitoring System</h1>
         <p>
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal" >리셋</button>
-            <!-- 모달 팝업 -->
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                            <h4 class="modal-title" id="myModalLabel">준비중</h4>
-                        </div>
-                        <div class="modal-body">준비중입니다.</div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">적용</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </p>
     </div>
 </div>
 
 <div class="container">
+    <!-- 모달 팝업 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title" id="myModalLabel">준비중</h4>
+                </div>
+                <div class="modal-body">준비중입니다.</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">적용</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Example row of columns -->
     <div class="row">
         <div id="device-list" class="col-md-16">
@@ -113,16 +113,17 @@
                             <th>설치위치</th>
                             <th>업데이트시간</th>
                             <th>상태</th>
+                            <th>제어</th>
                         </tr>
                     </thread>
                     <tbody>
-                    <tr ng-repeat="device in devices">
-                        <td>{{ device.dev_id }}</td>
-                        <td>{{ device.longitude }}</td>
-                        <td>{{ device.latitude }}</td>
-                        <td> 우리집 </td>
-                        <td>{{ device.date | date:'yyyy-MM-dd HH:mm:ss Z' }}</td>
-                        <td>
+                    <tr ng-repeat="device in devices" ng-click="click_dev(device)">
+                        <td style="vertical-align:middle">{{ device.dev_id }}</td>
+                        <td style="vertical-align:middle">{{ device.longitude }}</td>
+                        <td style="vertical-align:middle">{{ device.latitude }}</td>
+                        <td style="vertical-align:middle"> 우리집 </td>
+                        <td style="vertical-align:middle">{{ device.date | date:'yyyy-MM-dd HH:mm:ss Z' }}</td>
+                        <td style="vertical-align:middle">
                             <div ng-switch="" on="device.alive">
                                 <div ng-switch-when="true">
                                     <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
@@ -132,6 +133,7 @@
                                 </div>
                             </div>
                         </td>
+                        <td><button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal" >리셋</button></td>
                     </tr>
                     </tbody>
                 </table>
@@ -150,6 +152,48 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-md-16">
+            <h2>일간 그래프</h2>
+            <p><div
+                class="line-chart"
+                line-chart
+                line-data='daily_data'
+                line-xkey='date'
+                line-ykeys='["green_detect_cnt", "red_detect_cnt", "green_bi_detect_cnt", "rf_signal_cnt"]'
+                line-labels='["녹색신호검지", "적색신호검지", "녹색점멸", "RF신호검지"]'
+                line-colors='["#46FF01", "#FF0101", "#015F13", "#F7FA3F"]'>
+            </div></p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <h2>월간 그래프</h2>
+            <p><div
+                class="line-chart"
+                line-chart
+                line-data='monthly_data'
+                line-xkey='month'
+                line-parse-time='false'
+                line-ykeys='["green_detect_cnt", "red_detect_cnt", "green_bi_detect_cnt", "rf_signal_cnt"]'
+                line-labels='["녹색신호검지", "적색신호검지", "녹색점멸", "RF신호검지"]'
+                line-colors='["#46FF01", "#FF0101", "#015F13", "#F7FA3F"]'>
+            </div></p>
+        </div>
+        <div class="col-md-6">
+            <h2>년간 그래프</h2>
+            <p><div
+                class="line-chart"
+                line-chart
+                line-data='yearly_data'
+                line-xkey='date'
+                line-parse-time='false'
+                line-ykeys='["green_detect_cnt", "red_detect_cnt", "green_bi_detect_cnt", "rf_signal_cnt"]'
+                line-labels='["녹색신호검지", "적색신호검지", "녹색점멸", "RF신호검지"]'
+                line-colors='["#46FF01", "#FF0101", "#015F13", "#F7FA3F"]'>
+            </div></p>
+        </div>
+    </div>
+    <div class="row">
         <div id="data-list" class="col-md-16">
             <h2>센서 데이터<div class="btn btn-primary btn-md">{{ sensorData.length }}</div></h2>
             <p>
@@ -157,10 +201,10 @@
                 <thread>
                     <tr>
                         <th>장치ID</th>
-                        <th>그린</th>
-                        <th>레드</th>
-                        <th>그린양방향</th>
-                        <th>RF신호</th>
+                        <th>녹색신호검지</th>
+                        <th>적색신호검지</th>
+                        <th>녹색점멸</th>
+                        <th>RF신호검지</th>
                         <th>업데이트시간</th>
                     </tr>
                 </thread>
@@ -177,26 +221,8 @@
             </table>
             </p>
             <p>
-                <div class="text-center">
-                    <ul class="pagination">
-                        <li ng-class="{disabled: noPrevious()}"><a ng-click="selectPrevious()">이전</a></li>
-                        <li ng-repeat="page in pages" ng-class="{active: isActive(page)}"><a ng-click="selectPage(page)">{{page}}</a></li>
-                        <li ng-class="{disabled: noNext()}"><a ng-click="selectNext()">다음</a></li>
-                    </ul>
-                </div>
+                <!-- pagenation -->
             </p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <h2>월간 그래프</h2>
-            <p></p>
-            <p><a class="btn btn-default" href="#" role="button">상세 그래프 &raquo;</a></p>
-        </div>
-        <div class="col-md-6">
-            <h2>년간 그래프</h2>
-            <p></p>
-            <p><a class="btn btn-default" href="#" role="button">상세 그래프 &raquo;</a></p>
         </div>
     </div>
 
@@ -205,6 +231,9 @@
     <footer>
         <p>&copy; 삼성티엔지 2018</p>
     </footer>
+
+    <script>
+    </script>
 </div> <!-- /container -->
 
 

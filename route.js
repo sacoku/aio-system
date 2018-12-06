@@ -28,4 +28,22 @@ module.exports = function(app) {
             });
         }
     });
+
+    app.get('/api/daily_data', function(req, res) {
+        var id = req.query.dev_id;
+
+        tp_mongo.getDailySensorData(id, new Date().toISOString().slice(0,10), function(err, s) {
+            if (err) res.send(err);
+            else res.json(s);
+        })
+    });
+
+    app.get('/api/monthly_data', function(req, res) {
+        var id = req.query.dev_id;
+
+        tp_mongo.getMonthlySensorData(id, new Date().toISOString().slice(0,4), new Date().toISOString().slice(5,7), function(err, s) {
+            if (err) res.send(err);
+            else res.json(s);
+        })
+    });
 }
