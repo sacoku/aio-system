@@ -39,9 +39,8 @@
     <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-socket-io/0.7.0/socket.min.js"></script>
-
+    <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey="></script>
     <script src="core.js"></script>
-
 </head>
 
 <body ng-controller="mainController">
@@ -91,15 +90,30 @@
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
                     <h4 class="modal-title" id="myModalLabel">준비중</h4>
                 </div>
-                <div class="modal-body">준비중입니다.</div>
+                <div class="modal-body">
+                    <p>{{ dev_id }}</p>
+                    <p></p><button type="button" class="btn btn-default" ng-click="reset(dev_id)">리셋</button>&nbsp;
+                    <button type="button" class="btn btn-default" ng-click="control(dev_id)">제어</button>
+                </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary">적용</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
                 </div>
             </div>
         </div>
     </div>
     <!-- Example row of columns -->
+    <div class="row">
+        <div id="map" style="width:500px;height:400px;"></div>
+        <script>
+            var container2 = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
+            var options = { //지도를 생성할 때 필요한 기본 옵션
+                center: new daum.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
+                level: 3 //지도의 레벨(확대, 축소 정도)
+            };
+
+            var map = new daum.maps.Map(container2, options);
+        </script>
+    </div>
     <div class="row">
         <div id="device-list" class="col-md-16">
             <h2>장치 정보<div class="btn btn-primary btn-md">{{ devices.length }}</div></h2>
@@ -138,17 +152,6 @@
                     </tbody>
                 </table>
             </p>
-            <pagination num-pages="noOfPages" current-page="currentPage" class="pagination-small"></pagination>
-            <p>
-                <pagination num-pages="noOfPages" current-page="currentPage" class="pagination-small"></pagination>
-                <div class="text-center">
-                    <ul class="pagination">
-                        <li ng-class="{disabled: noPrevious()}"><a ng-click="selectPrevious()">이전</a></li>
-                        <li ng-repeat="page in pages" ng-class="{active: isActive(page)}"><a ng-click="selectPage(page)">{{page}}</a></li>
-                        <li ng-class="{disabled: noNext()}"><a ng-click="selectNext()">다음</a></li>
-                    </ul>
-                </div>
-            </p>
         </div>
     </div>
     <div class="row">
@@ -163,6 +166,9 @@
                 line-labels='["녹색신호검지", "적색신호검지", "녹색점멸", "RF신호검지"]'
                 line-colors='["#46FF01", "#FF0101", "#015F13", "#F7FA3F"]'>
             </div></p>
+            <p>
+            <div class="text-center"><div class="btn btn-primary btn-md">{{ dev_id }}</div></div>
+            </p>
         </div>
     </div>
     <div class="row">
@@ -178,6 +184,9 @@
                 line-labels='["녹색신호검지", "적색신호검지", "녹색점멸", "RF신호검지"]'
                 line-colors='["#46FF01", "#FF0101", "#015F13", "#F7FA3F"]'>
             </div></p>
+            <p>
+            <div class="text-center"><div class="btn btn-primary btn-md">{{ dev_id }}</div></div>
+            </p>
         </div>
         <div class="col-md-6">
             <h2>년간 그래프</h2>
@@ -185,14 +194,18 @@
                 class="line-chart"
                 line-chart
                 line-data='yearly_data'
-                line-xkey='date'
+                line-xkey='year'
                 line-parse-time='false'
                 line-ykeys='["green_detect_cnt", "red_detect_cnt", "green_bi_detect_cnt", "rf_signal_cnt"]'
                 line-labels='["녹색신호검지", "적색신호검지", "녹색점멸", "RF신호검지"]'
                 line-colors='["#46FF01", "#FF0101", "#015F13", "#F7FA3F"]'>
             </div></p>
+            <p>
+                <div class="text-center"><div class="btn btn-primary btn-md">{{ dev_id }}</div></div>
+            </p>
         </div>
     </div>
+    <!--
     <div class="row">
         <div id="data-list" class="col-md-16">
             <h2>센서 데이터<div class="btn btn-primary btn-md">{{ sensorData.length }}</div></h2>
@@ -221,10 +234,10 @@
             </table>
             </p>
             <p>
-                <!-- pagenation -->
             </p>
         </div>
     </div>
+    -->
 
     <hr>
 

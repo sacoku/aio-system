@@ -46,4 +46,23 @@ module.exports = function(app) {
             else res.json(s);
         })
     });
+
+    app.get('/api/yearly_data', function(req, res) {
+        var id = req.query.dev_id;
+
+        tp_mongo.getYearlySensorData(id, new Date().toISOString().slice(0,4), function(err, s) {
+            if (err) res.send(err);
+            else res.json(s);
+        })
+    });
+
+    app.get('/api/device_reset', function(req, res) {
+        var id = req.query.dev_id;
+        console.log(id + 'device reset');
+    });
+
+    app.get('/api/device_ctrl', function(req, res) {
+        var id = req.query.dev_id;
+        console.log(id + 'device control');
+    });
 }

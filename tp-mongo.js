@@ -61,7 +61,7 @@ exports.getAllDevices = function(func) {
 
 exports.getAllSensorData = function(func) {
     var date = new Date().toISOString().slice(0,10)
-    sensorData.find({date:{$gte: new Date(date)}}, {}, func);
+    sensorData.find({date:{$gte: new Date(date)}}, {}, func).sort({"date":-1});
 }
 
 exports.getSensorData = function(page, size, func) {
@@ -70,7 +70,7 @@ exports.getSensorData = function(page, size, func) {
     query.skip = size * (page - 1);
     query.limit = size;
 
-    sensorData.find({date:{$gte: new Date(date)}}, {}, query, func);
+    sensorData.find({date:{$gte: new Date(date)}}, {}, query, func).sort({"date":-1});
 }
 
 exports.getDailySensorData = function(id, date, func) {
@@ -79,6 +79,10 @@ exports.getDailySensorData = function(id, date, func) {
 
 exports.getMonthlySensorData = function(id, year, month, func) {
     monthlySensorData.find({dev_id: id, year:year}, {"month":true, "green_detect_cnt":true, "red_detect_cnt":true, "green_bi_detect_cnt":true, "rf_signal_cnt":true}, func).sort({"month":1});
+}
+
+exports.getYearlySensorData = function(id, year, func) {
+    yearlySensorData.find({dev_id: id}, {"year":true, "green_detect_cnt":true, "red_detect_cnt":true, "green_bi_detect_cnt":true, "rf_signal_cnt":true}, func).sort({"year":1});
 }
 
 exports.addSensorData = function(data) {
@@ -102,11 +106,11 @@ exports.addSensorData = function(data) {
         let green_bi_detect_cnt = 0;
         let rf_signal_cnt = 0;
 
-        e.forEach(function(e) {
-            green_detect_cnt += e.green_detect_cnt;
-            red_detect_cnt += e.red_detect_cnt;
-            green_bi_detect_cnt += e.green_bi_detect_cnt;
-            rf_signal_cnt += e.rf_signal_cnt;
+        e.forEach(function(ee) {
+            green_detect_cnt += ee.green_detect_cnt;
+            red_detect_cnt += ee.red_detect_cnt;
+            green_bi_detect_cnt += ee.green_bi_detect_cnt;
+            rf_signal_cnt += ee.rf_signal_cnt;
         });
 
         let month = new monthlySensorData();
@@ -120,6 +124,32 @@ exports.addSensorData = function(data) {
 
         monthlySensorData.updateOne({dev_id: month.dev_id, year:month.year, month:month.month}, month, {upsert: true, setDefaultsOnInsert: true}, function(err) {
             console.log(month.dev_id + ' month data updated');
+        });
+
+        monthlySensorData.find({dev_id:data.dev_id, "year": fromDate.toISOString().slice(0, 4)}, {}, function(err, y) {
+            let green_detect_cnt = 0;
+            let red_detect_cnt = 0;
+            let green_bi_detect_cnt = 0;
+            let rf_signal_cnt = 0;
+
+            y.forEach(function(yy) {
+                green_detect_cnt += yy.green_detect_cnt;
+                red_detect_cnt += yy.red_detect_cnt;
+                green_bi_detect_cnt += yy.green_bi_detect_cnt;
+                rf_signal_cnt += yy.rf_signal_cnt;
+            });
+
+            let year = new yearlySensorData();
+            year.dev_id = data.dev_id;
+            year.year = fromDate.toISOString().slice(0, 4);
+            year.green_detect_cnt = green_detect_cnt/y.length;
+            year.red_detect_cnt = red_detect_cnt/y.length;
+            year.green_bi_detect_cnt = green_bi_detect_cnt/y.length;
+            year.rf_signal_cnt = rf_signal_cnt/y.length;
+
+            yearlySensorData.updateOne({dev_id: year.dev_id, year:year.year}, year, {upsert: true, setDefaultsOnInsert: true}, function(err) {
+                console.log(month.dev_id + ' year data updated');
+            });
         });
     });
 }
