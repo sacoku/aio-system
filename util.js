@@ -1,5 +1,17 @@
 /** @description
  *
+ * @param n
+ * @param size
+ * @returns {string}
+ */
+function toHexStr(n, size) {
+    let s = n.toString(16);
+    while (s.length < (size || 2)) {s = "0" + s;}
+    return s;
+}
+
+/** @description
+ *
  * @param bytes
  * @returns {string}
  */
@@ -100,3 +112,22 @@ exports.getVersion = function(bytes) {
     version |= bytes[12];
     return version.toString();
 }
+
+/** @description
+ *
+ * @param args
+ * @returns {string}
+ */
+exports.getControlData = function(args) {
+    let data = "40";
+
+    data += toHexStr(args.dw, 2);
+    data += toHexStr(args.broad, 2);
+    data += toHexStr(args.st, 2);
+    data += toHexStr(args.et, 2);
+    data += toHexStr(args.sv, 2);
+    data += toHexStr(args.ev, 2);
+
+    return data;
+}
+

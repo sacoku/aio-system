@@ -1,4 +1,6 @@
 var tp_mongo = require('./tp-mongo.js');
+var tp_mqtt = require('./tp-mqtt.js');
+var util = require('./util.js');
 
 /** @description
  *
@@ -62,11 +64,12 @@ module.exports = function(app) {
 
     app.get('/api/device_reset', function(req, res) {
         var id = req.query.dev_id;
-        console.log(id + 'device reset');
+        res.json(tp_mqtt.pubResetRequest(id));
     });
 
     app.get('/api/device_ctrl', function(req, res) {
         var id = req.query.dev_id;
-        console.log(id + 'device control');
+        var args = JSON.parse(req.query.args);
+        res.json(tp_mqtt.pubControlRequest(id, util.getControlData(args)));
     });
 }

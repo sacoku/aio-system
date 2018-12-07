@@ -92,8 +92,8 @@
                 </div>
                 <div class="modal-body">
                     <p>{{ dev_id }}</p>
-                    <p></p><button type="button" class="btn btn-default" ng-click="reset(dev_id)">리셋</button>&nbsp;
-                    <button type="button" class="btn btn-default" ng-click="control(dev_id)">제어</button>
+                    <p><button type="button" class="btn btn-default" ng-click="control(dev_id)">제어</button></p>
+                    <p><button type="button" class="btn btn-default" ng-click="reset(dev_id)">리셋</button></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
@@ -133,8 +133,8 @@
                         <td style="vertical-align:middle">{{ device.dev_id }}</td>
                         <td style="vertical-align:middle">{{ device.longitude }}</td>
                         <td style="vertical-align:middle">{{ device.latitude }}</td>
-                        <td style="vertical-align:middle"> 우리집 </td>
-                        <td style="vertical-align:middle">{{ device.version }}</td>
+                        <td style="vertical-align:middle"> {{ device.location }} </td>
+                        <td style="vertical-align:middle">V{{ device.version }}.0</td>
                         <td style="vertical-align:middle">{{ device.date | date:'yyyy-MM-dd HH:mm:ss Z' }}</td>
                         <td style="vertical-align:middle">
                             <div ng-switch="" on="device.alive">

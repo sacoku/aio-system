@@ -9,6 +9,7 @@ var devices = mongoose.model('devices', {
     longitude: Number,
     latitude: Number,
     version: String,
+    location: String,
     date: Date,
     alive: Boolean
 });

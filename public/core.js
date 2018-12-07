@@ -9,6 +9,15 @@ app.service('SocketService', ['socketFactory', function(socketFactory) {
     });
 }]);
 
+app.filter('range', function() {
+    return function(input, total) {
+        total = parseInt(total);
+        for (var i=0; i<total; i++)
+            input.push(i);
+        return input;
+    };
+});
+
 /** @description
  *
  */
@@ -80,10 +89,21 @@ app.controller('mainController', ['$scope', '$http', 'SocketService', 'daumMap',
     }
 
     $scope.reset = function(id) { onReset($http, id, function(data) {
-        ;
+        alert(data);
     }); }
-    $scope.control = function(id) { onControl($http, id, function(data) {
-        ;
+
+    $scope.control = function(id) {
+        let data = {
+            dw: 1,
+            broad: 1,
+            st: 1,
+            et: 1,
+            sv: 1,
+            ev: 1
+        };
+
+        onControl($http, id, data, function(data) {
+        alert(data);
     }); }
 
     daumMap.init(37.474884, 127.138546);
@@ -107,8 +127,8 @@ function onReset($http, id, onSuccess) {
  * @param $http
  * @param id
  */
-function onControl($http, id, onSuccess) {
-    $http.get('/api/device_ctrl?dev_id=' + id)
+function onControl($http, id, data, onSuccess) {
+    $http.get('/api/device_ctrl?dev_id=' + id + '&args=' + window.encodeURIComponent(JSON.stringify(data)))
         .success(onSuccess);
 }
 

@@ -6,11 +6,13 @@ var logger = require('morgan');
 var tp_mqtt = require('./tp-mqtt.js');
 var tp_mongo = require('./tp-mongo.js');
 var socket = require('./socket.js');
+var util = require('./util.js');
+
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(logger('dev'));
 
-tp_mqtt({
+tp_mqtt.init({
     url: "mqtt://thingplugpf.sktiot.com",
     options: {
         clientId: "1098628406_01",
