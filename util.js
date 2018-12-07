@@ -1,43 +1,59 @@
+/** @description
+ *
+ * @param bytes
+ * @returns {string}
+ */
 exports.getGreenDetectCount = function(bytes) {
-    var count = 0;
-
-    count = bytes[2] << 8;
+    let count = bytes[2] << 8;
     count |= bytes[3];
     return count.toString();
 }
 
+/** @description
+ *
+ * @param bytes
+ * @returns {string}
+ */
 exports.getRedDetectCount = function(bytes) {
-    var count = 0;
-
-    count = bytes[4] << 8;
+    let count = bytes[4] << 8;
     count |= bytes[5];
     return count.toString();
 }
 
+/** @description
+ *
+ * @param bytes
+ * @returns {string}
+ */
 exports.getGreenBICount = function(bytes) {
-    var count = 0;
-
-    count = bytes[6] << 8;
+    let count = bytes[6] << 8;
     count |= bytes[7];
     return count.toString();
 }
 
+/** @description
+ *
+ * @param bytes
+ * @returns {string}
+ */
 exports.getRFSignalCount = function(bytes) {
-    var count = 0;
-
-    count = bytes[8] << 8;
+    let count = bytes[8] << 8;
     count |= bytes[9];
     return count.toString();
 }
 
 /////////////////////////////////////////////////
 
+/** @description
+ *
+ * @param bytes
+ * @returns {string}
+ */
 exports.getLatitude = function(bytes) {
-    var latitude = 0.0;
-    var maxEastPosition = 8388607; // 2^23 - 1
-    var maxWestPosition = 8388608; // -2^23
+    let maxEastPosition = 8388607; // 2^23 - 1
+    let maxWestPosition = 8388608; // -2^23
 
-    latitude = bytes[8] << 16;
+    let latitude = bytes[8] << 16;
     latitude |= bytes[9] << 8;
     latitude |= bytes[10];
     if(latitude >= 0) {
@@ -48,16 +64,19 @@ exports.getLatitude = function(bytes) {
         latitude *= 180;
     }
 
-    return latitude.toString();
+    return latitude.toFixed(8).toString();
 }
 
+/** @description
+ *
+ * @param bytes
+ * @returns {string}
+ */
 exports.getLongitude = function(bytes) {
-    var longitude = 0.0;
-    var maxNorthPosition = 8388607;   // 2^23 - 1
-    var maxSouthPosition = 8388608;   // -2^23
+    let maxNorthPosition = 8388607;   // 2^23 - 1
+    let maxSouthPosition = 8388608;   // -2^23
 
-
-    longitude = bytes[5] << 16;
+    let longitude = bytes[5] << 16;
     longitude |= bytes[6] << 8;
     longitude |= bytes[7];
     if(longitude >= 0) {
@@ -68,5 +87,16 @@ exports.getLongitude = function(bytes) {
         longitude *= 90;
     }
 
-    return longitude.toString();
+    return longitude.toFixed(8).toString();
+}
+
+/** @description
+ *
+ * @param bytes
+ * @returns {string}
+ */
+exports.getVersion = function(bytes) {
+    let version = bytes[11] << 8;
+    version |= bytes[12];
+    return version.toString();
 }

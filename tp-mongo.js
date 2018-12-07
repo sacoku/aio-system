@@ -1,13 +1,22 @@
 var mongoose = require('mongoose');
 
+/** @description
+ *
+ * @type {Model}
+ */
 var devices = mongoose.model('devices', {
     dev_id: String,
-    longitude: String,
-    latitude: String,
+    longitude: Number,
+    latitude: Number,
+    version: String,
     date: Date,
     alive: Boolean
 });
 
+/** @description
+ *
+ * @type {Model}
+ */
 var sensorData = mongoose.model('sensorData', {
     dev_id: String,
     green_detect_cnt: Number,
@@ -17,6 +26,10 @@ var sensorData = mongoose.model('sensorData', {
     date: Date
 });
 
+/** @description
+ *
+ * @type {Model}
+ */
 var monthlySensorData = mongoose.model('monthSensorData', {
     dev_id: String,
     year: Number,
@@ -27,6 +40,10 @@ var monthlySensorData = mongoose.model('monthSensorData', {
     rf_signal_cnt: Number
 });
 
+/** @description
+ *
+ * @type {Model}
+ */
 var yearlySensorData = mongoose.model('yearSensorData', {
     dev_id: String,
     year: Number,
@@ -36,6 +53,19 @@ var yearlySensorData = mongoose.model('yearSensorData', {
     rf_signal_cnt: Number
 });
 
+/** @description
+ *
+ * @type {Model}
+ */
+var accessLog = mongoose.model('accessLog', {
+    date: Date,
+    ip: String
+});
+
+/** @description
+ *
+ * @param url
+ */
 exports.setConnect = function(url) {
     mongoose.connect(url, { useNewUrlParser: true }, function(err) {
         if(err) console.error(err);
@@ -43,27 +73,49 @@ exports.setConnect = function(url) {
     });
 }
 
+/** @description
+ *
+ */
 exports.setDisconnect = function() {
     mongoose.disconnect(function() {
         console.log("mongo db disconnected.");
     })
 }
 
+/** @description
+ *
+ * @param device
+ */
 exports.addDevice = function(device) {
     devices.updateOne({dev_id: device.dev_id}, device, {upsert: true, setDefaultsOnInsert: true}, function(err) {
         console.log(device.dev_id + ' updated');
+        console.log("lat : " + device.latitude + ", lon : " + device.longitude);
     });
 }
 
+/** @description
+ *
+ * @param func
+ */
 exports.getAllDevices = function(func) {
-    devices.find(func);
+    devices.find(func).sort({"dev_id":1});
 }
 
+/** @description
+ *
+ * @param func
+ */
 exports.getAllSensorData = function(func) {
     var date = new Date().toISOString().slice(0,10)
     sensorData.find({date:{$gte: new Date(date)}}, {}, func).sort({"date":-1});
 }
 
+/** @description
+ *
+ * @param page
+ * @param size
+ * @param func
+ */
 exports.getSensorData = function(page, size, func) {
     var query = {}
 
@@ -73,18 +125,41 @@ exports.getSensorData = function(page, size, func) {
     sensorData.find({date:{$gte: new Date(date)}}, {}, query, func).sort({"date":-1});
 }
 
+/** @description
+ *
+ * @param id
+ * @param date
+ * @param func
+ */
 exports.getDailySensorData = function(id, date, func) {
     sensorData.find({dev_id: id, date:{$gte: new Date(date)}}, {"date":true, "green_detect_cnt":true, "red_detect_cnt":true, "green_bi_detect_cnt":true, "rf_signal_cnt":true}, func).sort({"date":1});
 }
 
+/** description
+ *
+ * @param id
+ * @param year
+ * @param month
+ * @param func
+ */
 exports.getMonthlySensorData = function(id, year, month, func) {
     monthlySensorData.find({dev_id: id, year:year}, {"month":true, "green_detect_cnt":true, "red_detect_cnt":true, "green_bi_detect_cnt":true, "rf_signal_cnt":true}, func).sort({"month":1});
 }
 
+/** @description
+ *
+ * @param id
+ * @param year
+ * @param func
+ */
 exports.getYearlySensorData = function(id, year, func) {
     yearlySensorData.find({dev_id: id}, {"year":true, "green_detect_cnt":true, "red_detect_cnt":true, "green_bi_detect_cnt":true, "rf_signal_cnt":true}, func).sort({"year":1});
 }
 
+/** @description
+ *
+ * @param data
+ */
 exports.addSensorData = function(data) {
     let s = new sensorData();
     s.dev_id = data.dev_id;
@@ -154,3 +229,16 @@ exports.addSensorData = function(data) {
     });
 }
 
+/** @description
+ *
+ * @param ip
+ */
+exports.addAccessLog = function(ip) {
+    var client = new accessLog();
+    client.ip = ip;
+    client.date = new Date();
+
+    client.save(function(err) {
+        console.log('accessd - ' + ip);
+    })
+}

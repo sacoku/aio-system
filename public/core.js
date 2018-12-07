@@ -1,86 +1,145 @@
 var app = angular.module('app', ['btford.socket-io', 'angular.morris']);
 
-app.value('angularMomentConfig', {
-    timezone: 'Asia/Seoul'
-})
+/** @description
+ *
+ */
 app.service('SocketService', ['socketFactory', function(socketFactory) {
     return socketFactory({
-        ioSocket: io.connect('http://localhost:3000')
+        ioSocket: io.connect('http://10.1.2.155:8080')
     });
 }]);
 
-app.controller('mainController', ['$scope', '$http', 'SocketService', function($scope, $http, SocketService) {
-    $http.get('/api/devices')
-        .success(function(data) {
-            $scope.devices = data;
-            $scope.click_dev(data[0]);
-        })
-        .error(function(data) {
-            console.log('Error: ' + data);
+/** @description
+ *
+ */
+app.service('daumMap', function() {
+    this.init = function(lat, lon, zoom) {
+        var options = {
+            center: new daum.maps.LatLng(lat, lon),
+            level: zoom
+        };
+
+        this.map = new daum.maps.Map(document.getElementById('map'), options);
+    }
+
+    this.setMarker = function(lat, lon) {
+        let moveLatlon = new daum.maps.LatLng(lat, lon);
+        let marker = new daum.maps.Marker({
+            position: moveLatlon
         });
 
-/*
+        marker.setMap(this.map);
+    }
+
+    this.setMove = function(lat, lon) {
+        let moveLatlon = new daum.maps.LatLng(lat, lon);
+        this.map.panTo(moveLatlon);
+    }
+
+    this.getAddress = function(lat, lon) {
+        var geocoder = new daum.maps.services.Geocoder();
+        geocoder.coord2Address(lat, lon, function(result, status) {
+            if (status === daum.maps.services.Status.OK) {
+                alert(result);
+            }
+        });
+    }
+});
+
+/** @description
+ *
+ */
+app.controller('mainController', ['$scope', '$http', 'SocketService', 'daumMap', function($scope, $http, SocketService, daumMap) {
+    getDeviceInfo($http, function(data) {
+        $scope.devices = data;
+        $scope.onChangedDevice(data[0].dev_id, data[0].longitude, data[0].latatude);
+    });
+    /*
+    getSensorData($http, function(data) {
+        $scope.sensorData = data.slice(0, 10);
+    });
+    */
+
+    $scope.onChangedDevice = function(dev_id, latitude, longitude) {
+        $scope.dev_id = dev_id;
+
+        getGraphInfo($http, '/api/daily_data', dev_id, function(data) {
+            $scope.daily_data = data;
+        })
+
+        getGraphInfo($http, '/api/monthly_data', dev_id, function(data) {
+            $scope.monthly_data = data;
+        })
+
+        getGraphInfo($http, '/api/yearly_data', dev_id, function(data) {
+            $scope.yearly_data = data;
+        })
+
+        if(latitude > 30 || longitude > 125)
+            daumMap.setMove(latitude.toFixed(5), longitude.toFixed(5));
+    }
+
+    $scope.reset = function(id) { onReset($http, id, function(data) {
+        ;
+    }); }
+    $scope.control = function(id) { onControl($http, id, function(data) {
+        ;
+    }); }
+
+    daumMap.init(37.474884, 127.138546);
+    daumMap.setMarker(37.474884, 127.138546);
+    daumMap.getAddress(37.474884, 127.138546);
+}]);
+
+/** @description
+ *
+ */
+app.controller('graphCtrl', ['$scope', '$http', 'SocketService', function($scope, $http, SocketService) {
+}]);
+
+function onReset($http, id, onSuccess) {
+    $http.get('/api/device_reset?dev_id=' + id)
+        .success(onSuccess);
+}
+
+/** @description
+ *
+ * @param $http
+ * @param id
+ */
+function onControl($http, id, onSuccess) {
+    $http.get('/api/device_ctrl?dev_id=' + id)
+        .success(onSuccess);
+}
+
+/** @description
+ *
+ * @param $http
+ * @param onSuccess
+ */
+function getSensorData($http, onSuccess) {
     $http.get('/api/sensorData')
-        .success(function(data) {
-            $scope.sensorData = data.slice(0, 10);
-        })
-        .error(function(data) {
-            console.log('Error: ' + data);
-        });
-*/
-    $scope.click_dev = function(device) {
-        $scope.dev_id = device.dev_id;
+        .success(onSuccess);
+}
 
-        $http.get('/api/daily_data?dev_id=' + device.dev_id)
-            .success(function(data) {
-                $scope.daily_data = data;
-            })
-            .error(function(data) {
-                console.log('Error: ' + data);
-            });
+/** @description
+ *
+ * @param $http
+ * @param onSuccess
+ */
+function getDeviceInfo($http, onSuccess) {
+    $http.get('/api/devices')
+        .success(onSuccess);
+}
 
-        $http.get('/api/monthly_data?dev_id=' + device.dev_id)
-            .success(function(data) {
-                $scope.monthly_data = data;
-            })
-            .error(function(data) {
-                console.log('Error: ' + data);
-            });
-
-        $http.get('/api/yearly_data?dev_id=' + device.dev_id)
-            .success(function(data) {
-                $scope.yearly_data = data;
-            })
-            .error(function(data) {
-                console.log('Error: ' + data);
-            });
-    }
-
-    $scope.reset = function(dev_id) {
-        $http.get('/api/device_reset?dev_id=' + dev_id)
-            .success(function(data) {
-                $scope.monthly_data = data;
-            })
-            .error(function(data) {
-                console.log('Error: ' + data);
-            });
-    }
-
-    $scope.control = function(dev_id) {
-        $http.get('/api/device_ctrl?dev_id=' + dev_id)
-            .success(function(data) {
-                $scope.monthly_data = data;
-            })
-            .error(function(data) {
-                console.log('Error: ' + data);
-            });
-    }
-
-    SocketService.on('status_of_dev', function(msg) {
-        console.log('status_of_dev');
-    });
-
-    SocketService.on('add_sensor_info', function(msg) {
-        console.log('add_sensor_info');
-    });
-}]);
+/** @description
+ *
+ * @param $http
+ * @param url
+ * @param dev_id
+ * @param onSuccess
+ */
+function getGraphInfo($http, url, dev_id, onSuccess) {
+    $http.get(url + '?dev_id=' + dev_id)
+        .success(onSuccess);
+}

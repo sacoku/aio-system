@@ -1,0 +1,31 @@
+<div class="row">
+    <div id="data-list" class="col-md-16">
+        <h2>센서 데이터<div class="btn btn-primary btn-md">{{ sensorData.length }}</div></h2>
+        <p>
+        <table class="items table table-striped table-bordered table-condensed">
+            <thread>
+                <tr>
+                    <th>장치ID</th>
+                    <th>녹색신호검지</th>
+                    <th>적색신호검지</th>
+                    <th>녹색점멸</th>
+                    <th>RF신호검지</th>
+                    <th>업데이트시간</th>
+                </tr>
+            </thread>
+            <tbody>
+            <tr ng-repeat="s in sensorData">
+                <td>{{ s.dev_id }}</td>
+                <td>{{ s.green_detect_cnt }}</td>
+                <td>{{ s.red_detect_cnt }}</td>
+                <td>{{ s.green_bi_detect_cnt }}</td>
+                <td>{{ s.rf_signal_cnt }}</td>
+                <td>{{ s.date | date:'yyyy-MM-dd HH:mm:ss Z' }}</td>
+            </tr>
+            </tbody>
+        </table>
+        </p>
+        <p>
+        </p>
+    </div>
+</div>

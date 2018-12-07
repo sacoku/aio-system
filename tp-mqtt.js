@@ -5,6 +5,10 @@ var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
 var socket = require('./socket.js');
 
+/** @description
+ *
+ * @param args
+ */
 module.exports = function(args) {
     var client = mqtt.connect(args.url, args.options);
     client.on(
@@ -32,6 +36,7 @@ module.exports = function(args) {
                         dev_id: dev_id,
                         longitude: util.getLongitude(bytes),
                         latitude: util.getLatitude(bytes),
+                        version: util.getVersion(bytes),
                         date: date,
                         alive: true
                     });

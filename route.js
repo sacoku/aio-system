@@ -1,5 +1,9 @@
 var tp_mongo = require('./tp-mongo.js');
 
+/** @description
+ *
+ * @param app
+ */
 module.exports = function(app) {
     app.get("/", function() {
         res.render('index2', {});

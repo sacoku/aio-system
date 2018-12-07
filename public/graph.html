@@ -1,0 +1,40 @@
+<div class="col-md-16">
+    <p class="p-3 mb-2 bg-primary text-white" style="font-size: 3vmin;font-weight: bold;">일간 그래프</p>
+    <p><div
+        class="line-chart"
+        line-chart
+        line-data='daily_data'
+        line-xkey='date'
+        line-ykeys='["green_detect_cnt", "red_detect_cnt", "green_bi_detect_cnt", "rf_signal_cnt"]'
+        line-labels='["녹색신호검지", "적색신호검지", "녹색점멸", "RF신호검지"]'
+        line-colors='["#46FF01", "#FF0101", "#015F13", "#F7FA3F"]'>
+    </div></p>
+</div>
+</div>
+<div class="row">
+<div class="col-md-6">
+    <p class="p-3 mb-2 bg-primary text-white" style="font-size: 3vmin;font-weight: bold;">월간 그래프</p>
+    <p><div
+        class="line-chart"
+        line-chart
+        line-data='monthly_data'
+        line-xkey='month'
+        line-parse-time='false'
+        line-ykeys='["green_detect_cnt", "red_detect_cnt", "green_bi_detect_cnt", "rf_signal_cnt"]'
+        line-labels='["녹색신호검지", "적색신호검지", "녹색점멸", "RF신호검지"]'
+        line-colors='["#46FF01", "#FF0101", "#015F13", "#F7FA3F"]'>
+    </div></p>
+</div>
+<div class="col-md-6">
+    <p class="p-3 mb-2 bg-primary text-white" style="font-size: 3vmin;font-weight: bold;">년간 그래프</p>
+    <p><div
+        class="line-chart"
+        line-chart
+        line-data='yearly_data'
+        line-xkey='year'
+        line-parse-time='false'
+        line-ykeys='["green_detect_cnt", "red_detect_cnt", "green_bi_detect_cnt", "rf_signal_cnt"]'
+        line-labels='["녹색신호검지", "적색신호검지", "녹색점멸", "RF신호검지"]'
+        line-colors='["#46FF01", "#FF0101", "#015F13", "#F7FA3F"]'>
+    </div></p>
+</div>

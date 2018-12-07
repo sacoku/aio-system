@@ -31,7 +31,7 @@ tp_mqtt({
     }
 });
 
-server.listen(3000, function() {
+server.listen(8080, function() {
     console.log('app is started.');
 });
 
