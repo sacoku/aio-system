@@ -84,18 +84,54 @@
 <div class="container">
     <!-- 모달 팝업 -->
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
-        <div class="modal-dialog">
+        <div class="modal-dialog" ng-controller="modalDialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
-                    <h4 class="modal-title" id="myModalLabel">준비중</h4>
+                    <h4 class="modal-title" id="myModalLabel">{{ dev_id }}</h4>
                 </div>
                 <div class="modal-body">
-                    <p>{{ dev_id }}</p>
-                    <p><button type="button" class="btn btn-default" ng-click="control(dev_id)">제어</button></p>
-                    <p><button type="button" class="btn btn-default" ng-click="reset(dev_id)">리셋</button></p>
+                    <table class="table">
+                        <tr>
+                            <th width="60">요일</th>
+                            <th width="60">방송유무</th>
+                            <th width="60">시작시간</th>
+                            <th width="60">종료시간</th>
+                            <th width="60">시작볼륨</th>
+                            <th width="60">종료볼륨</th>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <select class="show-tick form-control dropdown_custom_list" ng-model="sel_dw" ng-options="dw.name for dw in dws">
+                                </select>
+                            </td>
+                            <td>
+                                <select class="show-tick form-control dropdown_custom_list" ng-model="sel_broad" ng-options="broad.name for broad in broads">
+                                </select>
+                            </td>
+                            <td>
+                                <select class="show-tick form-control dropdown_custom_list" ng-model="sel_st" ng-options="st.name for st in sts">
+                                </select>
+                            </td>
+                            <td>
+                                <select class="show-tick form-control dropdown_custom_list" ng-model="sel_et" ng-options="et.name for et in ets">
+                                </select>
+                            </td>
+                            <td>
+                                <select class="show-tick form-control dropdown_custom_list" ng-model="sel_sv" ng-options="sv.name for sv in svs">
+                                </select>
+                            </td>
+                            <td>
+                                <select class="show-tick form-control dropdown_custom_list" ng-model="sel_ev" ng-options="ev.name for ev in evs">
+                                </select>
+                            </td>
+                        </tr>
+                    </table>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-default" ng-click="control(dev_id)">제어</button>
+                    <button type="button" class="btn btn-default" ng-click="reset(dev_id)">리셋</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
                 </div>
             </div>

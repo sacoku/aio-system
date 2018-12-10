@@ -88,24 +88,6 @@ app.controller('mainController', ['$scope', '$http', 'SocketService', 'daumMap',
             daumMap.setMove(latitude.toFixed(5), longitude.toFixed(5));
     }
 
-    $scope.reset = function(id) { onReset($http, id, function(data) {
-        alert(data);
-    }); }
-
-    $scope.control = function(id) {
-        let data = {
-            dw: 1,
-            broad: 1,
-            st: 1,
-            et: 1,
-            sv: 1,
-            ev: 1
-        };
-
-        onControl($http, id, data, function(data) {
-        alert(data);
-    }); }
-
     daumMap.init(37.474884, 127.138546);
     daumMap.setMarker(37.474884, 127.138546);
     daumMap.getAddress(37.474884, 127.138546);
@@ -114,7 +96,65 @@ app.controller('mainController', ['$scope', '$http', 'SocketService', 'daumMap',
 /** @description
  *
  */
-app.controller('graphCtrl', ['$scope', '$http', 'SocketService', function($scope, $http, SocketService) {
+app.controller('modalDialog', ['$scope', '$http', 'SocketService', function($scope, $http, SocketService) {
+    let timeVal = [];
+    let volVal = [];
+
+    for(i = 0; i< 24; i++) {
+        timeVal.push({id: i, name: i});
+    }
+
+    for(i = 0; i< 7; i++) {
+        volVal.push({id: i, name: i});
+    }
+
+    $scope.dws = [
+        {id: 0, name: "일"},
+        {id: 1, name: "월"},
+        {id: 2, name: "화"},
+        {id: 3, name: "수"},
+        {id: 4, name: "목"},
+        {id: 5, name: "금"},
+        {id: 6, name: "토"}
+    ];
+    $scope.sel_dw = $scope.dws[0];
+
+    $scope.broads = [
+        {id: 0, name: "방송함"},
+        {id: 1, name: "방송안함"}
+    ];
+    $scope.sel_broad = $scope.broads[0];
+
+    $scope.sts = timeVal;
+    $scope.sel_st = $scope.sts[0];
+
+    $scope.ets = timeVal;
+    $scope.sel_et = $scope.ets[0];
+
+    $scope.svs = volVal;
+    $scope.sel_sv = $scope.svs[0];
+
+    $scope.evs = volVal;
+    $scope.sel_ev = $scope.evs[0];
+
+    $scope.reset = function(id) { onReset($http, id, function(data) {
+        alert(data);
+    }); }
+
+    $scope.control = function(id) {
+        let data = {
+            dw: $scope.sel_dw.id,
+            broad: $scope.sel_broad.id,
+            st: $scope.sel_st.id,
+            et: $scope.sel_et.id,
+            sv: $scope.sel_sv.id,
+            ev: $scope.sel_ev.id
+        };
+
+        onControl($http, $scope, id, data, function(data) {
+            alert(data);
+        }); }
+
 }]);
 
 function onReset($http, id, onSuccess) {
@@ -127,7 +167,7 @@ function onReset($http, id, onSuccess) {
  * @param $http
  * @param id
  */
-function onControl($http, id, data, onSuccess) {
+function onControl($http, $scope, id, data, onSuccess) {
     $http.get('/api/device_ctrl?dev_id=' + id + '&args=' + window.encodeURIComponent(JSON.stringify(data)))
         .success(onSuccess);
 }
