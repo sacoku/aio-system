@@ -10,6 +10,15 @@ function toHexStr(n, size) {
     return s;
 }
 
+function toDecStr(n, size) {
+    let s = n.toString(10);
+    while (s.length < (size || 2)) {s = "0" + s;}
+    return s;
+}
+
+exports.toHexStr = toHexStr;
+exports.toDecStr = toDecStr;
+
 /** @description
  *
  * @param bytes

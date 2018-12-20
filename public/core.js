@@ -84,13 +84,13 @@ app.controller('mainController', ['$scope', '$http', 'SocketService', 'daumMap',
             $scope.yearly_data = data;
         })
 
-        if(latitude > 30 || longitude > 125)
+        if(latitude > 30 || longitude > 125) {
             daumMap.setMove(latitude.toFixed(5), longitude.toFixed(5));
+            daumMap.setMarker(latitude.toFixed(5), longitude.toFixed(5));
+        }
     }
 
     daumMap.init(37.474884, 127.138546);
-    daumMap.setMarker(37.474884, 127.138546);
-    daumMap.getAddress(37.474884, 127.138546);
 }]);
 
 /** @description

@@ -65,7 +65,16 @@ exports.init = function(args) {
                             date: date
                         });
 
+                        var h_data = "TNG-AIO-1100" + 
+                                     dev_id[0].substr(8, dev_id[0].length) + 
+                                     util.toDecStr(util.getGreenDetectCount(bytes)) + 
+                                     util.toDecStr(util.getRedDetectCount(bytes)) + 
+                                     util.toDecStr(util.getGreenBICount(bytes)) + 
+                                     util.toDecStr(util.getRFSignalCount(bytes));
+                        
+                        console.log("send data : " + h_data);
                         socket.send('add_sensor_info', '');
+
                         break;
                 }
             } else if(op == 3) {
