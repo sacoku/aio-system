@@ -4,6 +4,7 @@ var tp_mongo = require('./tp-mongo.js');;
 var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
 var socket = require('./socket.js');
+const https = require('https');
 
 var client = undefined;
 
@@ -73,6 +74,15 @@ exports.init = function(args) {
                                      util.toDecStr(util.getRFSignalCount(bytes));
                         
                         console.log("send data : " + h_data);
+
+                        var req = https.get('https://iotdata.eseoul.go.kr/api/send/f80ec1cb948a4dd28/1/' + h_data, function(resp) {
+                            console.log('ok');
+                        });
+
+                        req.on('error', function(err) {
+                            console.error(err);
+                        });
+              
                         socket.send('add_sensor_info', '');
 
                         break;
